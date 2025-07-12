@@ -24,6 +24,7 @@ export default function HomeScreen({ navigation }) {
       <Text>Restaurant: {item.restaurant}</Text>
       <Text>Rating: {item.rating}/5</Text>
       <Text>By: {item.username}</Text>
+      <Text>Desccription: {item.description}</Text>
     </View>
   );
 

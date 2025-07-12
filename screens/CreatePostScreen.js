@@ -7,6 +7,7 @@ export default function CreatePostScreen({ navigation }) {
   const [dishName, setDishName] = useState('');
   const [restaurant, setRestaurant] = useState('');
   const [rating, setRating] = useState('');
+  const [description, setDescription] = useState('');
 
   const handleCreatePost = async () => {
     if (!dishName || !restaurant || !rating) {
@@ -31,6 +32,7 @@ export default function CreatePostScreen({ navigation }) {
         dishName,
         restaurant,
         rating: parseInt(rating),
+        description,
         timestamp: new Date(),
       });
 
@@ -62,6 +64,12 @@ export default function CreatePostScreen({ navigation }) {
         value={rating}
         onChangeText={setRating}
         keyboardType="numeric"
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Description"
+        value={description}
+        onChangeText={setDescription}
       />
       <Button title="Submit Post" onPress={handleCreatePost} />
     </View>
