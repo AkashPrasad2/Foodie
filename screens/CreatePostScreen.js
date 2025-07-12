@@ -34,6 +34,7 @@ export default function CreatePostScreen({ navigation }) {
         rating: parseInt(rating),
         description,
         timestamp: new Date(),
+        likeCount: 0
       });
 
       Alert.alert('Success', 'Post created!');

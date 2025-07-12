@@ -1,31 +1,85 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, Button, FlatList, StyleSheet } from 'react-native';
+import { View, Text, Button, FlatList, StyleSheet, TouchableOpacity } from 'react-native';
 import { collection, query, orderBy, onSnapshot } from 'firebase/firestore';
 import { auth, db } from '../firebaseconfig';
+import { toggleLike, isPostLiked } from '../utils/likeHelpers';
+
+// Post Item component 
+const PostItem = ({ post, onLike }) => {
+  const [liked, setLiked] = useState(post.liked || false);
+
+  const handleLike = async () => {
+    try {
+      const newState = await toggleLike(post.id, post.userId);
+      setLiked(newState);
+      onLike(post.id, newState); // Update parent state for like count
+    } catch (error) {
+      console.error('Like error:', error.message);
+    }
+  };
+
+  return (
+    <View style={styles.post}>
+      <Text style={styles.dishName}>{post.dishName}</Text>
+      <Text>Restaurant: {post.restaurant}</Text>
+      <Text>Rating: {post.rating}/5</Text>
+      <Text>By: {post.username}</Text>
+      <TouchableOpacity onPress={handleLike}>
+        <Text>{liked ? '💖 Unlike' : '🤍 Like'} ({post.likeCount || 0})</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
 
 export default function HomeScreen({ navigation }) {
   const [posts, setPosts] = useState([]);
 
   useEffect(() => {
+    // Fetch posts from Firestore
     const q = query(collection(db, 'posts'), orderBy('timestamp', 'desc'));
-    const unsubscribe = onSnapshot(q, (snapshot) => {
+    const unsubscribe = onSnapshot(q, async (snapshot) => {
       const postData = snapshot.docs.map((doc) => ({
         id: doc.id,
         ...doc.data(),
       }));
-      setPosts(postData);
+
+      // Fetch liked status for all posts in one go
+      const likedStatuses = await Promise.all(
+        postData.map(async (post) => ({
+          id: post.id,
+          liked: await isPostLiked(post.id),
+        }))
+      );
+
+      // Merge liked status into post data
+      const updatedPosts = postData.map((post) => {
+        const likedStatus = likedStatuses.find((status) => status.id === post.id);
+        return { ...post, liked: likedStatus.liked };
+      });
+
+      setPosts(updatedPosts);
     });
-    return unsubscribe;
+
+    return () => unsubscribe();
   }, []);
 
+  // Update like count and liked status in state
+  const handleLikeUpdate = (postId, newLikedState) => {
+    setPosts((prevPosts) =>
+      prevPosts.map((post) =>
+        post.id === postId
+          ? {
+              ...post,
+              liked: newLikedState,
+              likeCount: newLikedState ? (post.likeCount || 0) + 1 : (post.likeCount || 0) - 1,
+            }
+          : post
+      )
+    );
+  };
+
   const renderPost = ({ item }) => (
-    <View style={styles.post}>
-      <Text style={styles.dishName}>{item.dishName}</Text>
-      <Text>Restaurant: {item.restaurant}</Text>
-      <Text>Rating: {item.rating}/5</Text>
-      <Text>By: {item.username}</Text>
-      <Text>Desccription: {item.description}</Text>
-    </View>
+    <PostItem post={item} onLike={handleLikeUpdate} />
   );
 
   return (

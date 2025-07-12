@@ -26,6 +26,7 @@ export default function ProfileScreen({ navigation }) {
         <>
           <Text>Username: {userData.username}</Text>
           <Text>Email: {userData.email}</Text>
+          <Text>Bio: {userData.bio}</Text>
         </>
       ) : (
         <Text>Username and Email unavailable</Text>

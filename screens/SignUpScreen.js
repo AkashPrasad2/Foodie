@@ -8,6 +8,7 @@ export default function SignUpScreen({ navigation }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [username, setUsername] = useState('');
+  const [bio, setBio] = useState('');
 
   const handleSignUp = async () => {
     try {
@@ -18,6 +19,7 @@ export default function SignUpScreen({ navigation }) {
       await setDoc(doc(db, 'users', user.uid), {
         username,
         email,
+        bio,
         createdAt: new Date(),
       });
 
@@ -51,6 +53,12 @@ export default function SignUpScreen({ navigation }) {
         placeholder="Username"
         value={username}
         onChangeText={setUsername}
+      />
+      <TextInput
+        style={styles.input}
+        placeholder="Bio"
+        value={bio}
+        onChangeText={setBio}
       />
       <Button title="Sign Up" onPress={handleSignUp} />
       <Button title="Go to Login" onPress={() => navigation.navigate('Login')} />
