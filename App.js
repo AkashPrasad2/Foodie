@@ -7,6 +7,7 @@ import LoginScreen from './screens/LoginScreen';
 import HomeScreen from './screens/HomeScreen';
 import CreatePostScreen from './screens/CreatePostScreen';
 import ProfileScreen from './screens/ProfileScreen';
+import SearchScreen from './screens/SearchScreen';
 
 const Stack = createNativeStackNavigator();
 
@@ -28,6 +29,7 @@ export default function App() {
             <Stack.Screen name="Home" component={HomeScreen} options={{ title: 'Foodie Feed' }} />
             <Stack.Screen name="CreatePost" component={CreatePostScreen} options={{ title: 'New Post' }} />
             <Stack.Screen name="Profile" component={ProfileScreen} options={{ title: 'Profile' }} />
+            <Stack.Screen name="Search" component={SearchScreen} options={{ title: 'Search' }} />
           </>
         ) : (
           <>

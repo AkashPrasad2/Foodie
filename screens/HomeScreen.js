@@ -93,6 +93,7 @@ export default function HomeScreen({ navigation }) {
       />
       <Button title="Create Post" onPress={() => navigation.navigate('CreatePost')} />
       <Button title="Profile" onPress={() => navigation.navigate('Profile')} />
+      <Button title="Search" onPress={() => navigation.navigate('Search')} />
       <Button title="Logout" onPress={() => auth.signOut()} />
     </View>
   );
