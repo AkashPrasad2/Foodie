@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { View, Text, FlatList, StyleSheet } from 'react-native';
 import { auth, db } from '../firebaseconfig';
 import { collection, query, where, getDocs, doc, getDoc } from 'firebase/firestore';
+import PostItem from '../components/PostItem';
 
 export default function LikedPostsScreen() {
   const [likedPosts, setLikedPosts] = useState([]);
@@ -13,14 +14,10 @@ export default function LikedPostsScreen() {
       if (!user) return;
 
       try {
-        // Get all likes by current user
         const q = query(collection(db, 'likes'), where('userId', '==', user.uid));
         const likeDocs = await getDocs(q);
+        const likedPostIds = likeDocs.docs.map((doc) => doc.data().postId);
 
-        // Extract postIds from likes
-        const likedPostIds = likeDocs.docs.map(doc => doc.data().postId);
-
-        // Fetch all posts in parallel
         const postFetches = likedPostIds.map(async (postId) => {
           const postSnap = await getDoc(doc(db, 'posts', postId));
           return postSnap.exists() ? { id: postId, ...postSnap.data() } : null;
@@ -38,15 +35,7 @@ export default function LikedPostsScreen() {
     fetchLikedPosts();
   }, []);
 
-  const renderPost = ({ item }) => (
-    <View style={styles.post}>
-      <Text style={styles.dishName}>{item.dishName}</Text>
-      <Text>Restaurant: {item.restaurant}</Text>
-      <Text>Rating: {item.rating}/5</Text>
-      <Text>By: {item.username}</Text>
-      <Text>Likes: {item.likeCount || 0}</Text>
-    </View>
-  );
+  const renderPost = ({ item }) => <PostItem post={item} />;
 
   return (
     <View style={styles.container}>

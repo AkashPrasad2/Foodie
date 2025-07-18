@@ -28,7 +28,7 @@ export async function toggleLike(postId, postAuthorId) {
         likeCount: increment(-1),
       });
       console.log(`Decremented likeCount for post: ${postId}`);
-      return false; // Changed from {liked: false}
+      return false; 
     } else {
       // Like
       await setDoc(likeRef, {
@@ -41,7 +41,7 @@ export async function toggleLike(postId, postAuthorId) {
         likeCount: increment(1),
       });
       console.log(`Incremented likeCount for post: ${postId}`);
-      return true; // Changed from {liked: true}
+      return true; 
     }
   } catch (error) {
     console.error(`Toggle like failed: ${error.message}`);
